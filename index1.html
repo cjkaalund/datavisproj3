@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<style>
+		body {
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+		#menu_header {
+        color: blue;
+        font-style: italic;
+      }
+	</style>
+</head>
+
+<div id="menu_header">Select the delay reason from the menu below:</div id="menu_header">
+<select id="menu"></select>
+
+<div id="chartContainer">
+  <script src="d3.js"></script>
+  <script src="dimple.v2.1.6.js"></script>
+  <script type="text/javascript">
+  
+// Chart size and margins
+// The margins allow space for surrounding elements such as the legend
+	var margin = {top: 100, right: 200, bottom: 100, left:60}
+	var chartSize = {width: 550, height: 250}
+
+// Create chart svg
+	var svg = dimple.newSvg("#chartContainer",
+		margin.left + chartSize.width + margin.right,
+		margin.top + chartSize.height + margin.bottom
+	);
+	
+// Chart heading
+	svg.append("text")
+		.attr("x", margin.left + chartSize.width / 2).attr("y", margin.top / 2.5)
+		.style("text-anchor", "middle").style("font-family", "sans-serif")
+		.style("font-size", "25px")
+		.attr("id", "heading") // give it an id for selection later on
+		.text("U.S. Airline Flight Delay for 2014, Due to Carrier");
+
+// Display data source
+	svg.append("text")
+		.attr("x", margin.left + chartSize.width / 2).attr("y", margin.top / 1.3)
+		.style("text-anchor", "middle").style("font-family", "sans-serif")
+		.style("font-size", "12px")
+		.text("Source: http://www.transtats.bts.gov/OT_Delay/OT_DelayCause1.asp");
+
+// Load the data
+	d3.csv("/data/2014_airline_delay_ct_reshaped.csv", function (data) {
+
+// Default menu selection for delay reason
+	var reason_selection = "Carrier";
+						 
+// Draw a scatterplot with legend using dimple
+      var myChart = new dimple.chart(svg, data);
+      myChart.setBounds(margin.left, margin.top, chartSize.width, chartSize.height)
+
+		myChart.defaultColors = [ // Custom color palette based on http://flatuicolors.com/ + my own
+			new dimple.color("#3498db", "#2980b9", 1), // peter river
+			new dimple.color("#e74c3c", "#c0392b", 1), // alizarin
+			new dimple.color("#2ecc71", "#27ae60", 1), // emerald
+			new dimple.color("#9b59b6", "#8e44ad", 1), // amethyst
+			new dimple.color("#e67e22", "#d35400", 1), // carrot
+			new dimple.color("#f1c40f", "#f39c12", 1), // sun flower
+			new dimple.color("#1abc9c", "#16a085", 1), // turquoise
+			new dimple.color("#116644", "#559977", 1), // green	
+			new dimple.color("#95a5a6", "#7f8c8d", 1), // concrete
+			new dimple.color("#34495e", "#2c3e50", 1), // wet asphalt
+			new dimple.color("#ffbbdd", "#ff7799", 1), // rose
+			new dimple.color("#595723", "#2E3C22", 1), // army
+			new dimple.color("#F3D885", "#F79A67", 1), // pale yellow
+			new dimple.color("#5F7CAF", "#1317DB", 1), // pale blue
+			new dimple.color("#7AC30F", "#7AB64D", 1)  // bright green
+		];
+      
+      var x = myChart.addLogAxis("x", "total_ct");
+		x.title = "Number of flights";
+		x.fontSize = "12px";
+		x.logBase = 10;
+      x.overrideMin = 0.1;
+      x.overrideMax = 10000;
+		
+      var y = myChart.addMeasureAxis("y", "avg_delay");
+      y.title = "Arrival delay (minutes)";
+      y.fontSize = "12px";
+      y.overrideMin = 10;
+      
+       // the legend will be the carrier_name, and the airport_name column disaggregates by airport_name
+      var mySeries = myChart.addSeries(["airport_name", "carrier_name"], dimple.plot.scatter);
+      
+      var carrier_list = dimple.getUniqueValues(data, "carrier_name").sort();
+		mySeries.addOrderRule(carrier_list); // sort legend
+      var myLegend = myChart.addLegend(margin.left + chartSize.width,
+      	margin.top, margin.right, chartSize.height, "Left");
+      myLegend.fontSize = "12px";
+
+		myChart.data = dimple.filterData(data, "reason", "Carrier"); // display data for carrier delay reason
+      myChart.draw();
+
+//		var carrier_list_default = ["Delta Air Lines Inc.", "Southwest Airlines Co.", "ExpressJet Airlines Inc."];
+//		data_with_reason = dimple.filterData(data, "reason", "Carrier"); // default reason is Carrier
+//		myChart.data = dimple.filterData(data_with_reason, "carrier_name", carrier_list_default); // Filter for carrier
+
+      myChart.draw();
+		d3.selectAll("circle").attr("r",3).attr("opacity",0.5); // change radius and opacity of points
+
+// Legend title
+		svg.selectAll("title_text")
+			.data(["Click legend to select one carrier","CTRL-click to select more than one",
+			"SHIFT-click to select all"])
+			.enter()
+			.append("text")
+				.attr("x", margin.left + chartSize.width + 10)
+				.attr("y", function (d, i) { return margin.top - 42 + i * 14; })
+				.style("font-family", "sans-serif")
+				.style("font-size", "12px")
+				.style("fill","blue")
+				.text(function (d) { return d; });
+
+// Add note to bottom of the chart explaining the axes
+		svg.selectAll("title_text")
+			.data(["Note:",
+			"The arrival delay is averaged over all flights to a particular airport and over all months of the year.",
+			"The number of flights is the summed over all the months of the year."])
+			.enter()
+			.append("text")
+				.attr("x", 0)
+				.attr("y", function (d, i) { return margin.top + chartSize.height + i * 16 + 60; })
+				.style("font-family", "sans-serif")
+				.style("font-size", "12px")
+				.text(function (d) { return d; });
+
+// Interactive legend
+// http://dimplejs.org/advanced_examples_viewer.html?id=advanced_interactive_legends
+		myChart.legends = []; // Orphan the legend
+		myLegend.shapes.selectAll("rect")
+			.on("click", function (e) {
+				var selected_carrier = e.aggField.slice(-1)[0];			
+				var hide = false;
+				var new_carrier_list = [];
+				var single_selected = true;
+				
+				if (d3.event.metaKey) { // If ctrl/cmd key held down, more than one carrier can be selected
+					single_selected = false;
+				};
+				
+				if (single_selected) { // Only one carrier is selected if ctrl/cmd key not held on click
+					new_carrier_list.push(selected_carrier);
+					myLegend.shapes.selectAll("rect").style("opacity", 0.2); // hide all shapes
+					d3.select(this).style("opacity", 0.8); // but don't hide selected shape
+				};
+				
+				if (d3.event.shiftKey) { // Select all
+					new_carrier_list = dimple.getUniqueValues(data, "carrier_name").sort();
+					myLegend.shapes.selectAll("rect").style("opacity", 0.8); // highlight all shapes
+				};				
+				
+				if (single_selected === false) {	// If ctrl/cmd held down, more than one carrier can be selected or deselected
+					carrier_list.forEach(function (f) { // If carrier_list contains clicked shape, hide it
+						if (f === selected_carrier) {
+							hide = true;
+						} else {
+							new_carrier_list.push(f);
+						}
+					});
+				
+					if (hide) {
+						d3.select(this).style("opacity", 0.2); // hide the shape
+					} else {
+						new_carrier_list.push(selected_carrier); // selected shape was previously hidden, now show it again
+						d3.select(this).style("opacity", 0.8); // show shape
+					};		
+				};
+				
+				carrier_list = new_carrier_list; // Update the filters			
+				data_with_reason = dimple.filterData(data, "reason", reason_selection); // Must maintain filter for reason
+				myChart.data = dimple.filterData(data_with_reason, "carrier_name", carrier_list); // Filter for carrier
+
+				myChart.draw();
+				d3.selectAll("circle").attr("r",3).attr("opacity",0.5); // change radius and opacity of points
+			});
+	
+//	Drop-down menu for selecting airport
+      var reason_list = dimple.getUniqueValues(data, "reason").sort(); // menu items
+      reason_list.unshift("Select delay reason"); // menu title
+		var menu = d3.select("#menu")
+		
+		menu.selectAll("option")
+			.data(reason_list)
+			.enter()
+			.append("option")
+			.text(function(d) {
+				 return d;
+			});
+
+		menu.on("change", change);
+
+		function change() {
+			var old_reason_selection = reason_selection;
+			reason_selection = reason_list[this.selectedIndex];
+			if (reason_selection != "Select delay reason") { // do not update if select menu title
+				update(reason_selection);
+			};
+			if (reason_selection === "Select delay reason") {  // don't update data if select "Select delay reason"
+				reason_selection = old_reason_selection;
+			};
+		};
+
+// Update chart when new item selected from pull-down menu
+		function update(media_val) {
+			data_with_reason = dimple.filterData(data, "reason", media_val); // only display data for selected airport
+			myChart.data = dimple.filterData(data_with_reason, "carrier_name", carrier_list); // Filter for carrier, don't want to lose this
+			
+			d3.select("#heading").remove() // clear old chart heading
+
+			svg.append("text") // update chart heading
+				.attr("x", margin.left + chartSize.width / 2).attr("y", margin.top / 2)
+				.style("text-anchor", "middle").style("font-family", "sans-serif")
+				.style("font-size", "25px").attr("id", "heading")
+				.text("Flight Delay Due to " + media_val);
+				
+			myChart.draw();
+			d3.selectAll("circle").attr("r",3).attr("opacity",0.5); // change radius and opacity of points
+		};
+    });
+		
+  </script>
+</div>
+</html>
