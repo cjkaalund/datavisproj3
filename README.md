@@ -43,8 +43,6 @@ Q5. What do you notice in the visualisation?
 
 *I don’t know what the circle size is.*
 
-In response to this reviewer's answer to question 2, I added an explanation of the various delay reasons to the bottom of the chart.
-
 ##Second reviewer - Clare - feedback on bubble chart
 Q1. What do you notice in the visualisation?
 
