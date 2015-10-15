@@ -21,7 +21,7 @@
 <div id="chartContainer">
    <script src="http://d3js.org/d3.v3.min.js"></script>
    <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
-   <script type="text/javascript">
+ 	<script type="text/javascript">
   
 // Chart size and margins
 // The margins allow space for surrounding elements such as the legend
@@ -33,20 +33,30 @@
 		margin.left + chartSize.width + margin.right,
 		margin.top + chartSize.height + margin.bottom
 	);
-	
+
 // Chart heading
 	svg.append("text")
 		.attr("x", margin.left + chartSize.width / 2).attr("y", margin.top / 2.5)
 		.style("text-anchor", "middle").style("font-family", "sans-serif")
 		.style("font-size", "22px")
 		.attr("id", "heading") // give it an id for selection later on
+		.text("How and why does flight delay vary over the day?");
+		
+// Chart subheading
+	svg.append("text")
+		.attr("x", margin.left + chartSize.width / 2).attr("y", margin.top / 1.4)
+		.style("text-anchor", "middle").style("font-family", "sans-serif")
+		.style("font-size", "18px")
+		.style("fill","blue")
+		.attr("id", "heading") // give it an id for selection later on
 		.text("Flight Delay for U.S. Airports, January 2008");
 
 // Display data source
 	svg.append("text")
-		.attr("x", margin.left + chartSize.width / 2).attr("y", margin.top / 1.3)
+		.attr("x", margin.left + chartSize.width / 2).attr("y", margin.top)
 		.style("text-anchor", "middle").style("font-family", "sans-serif")
 		.style("font-size", "12px")
+		.style("fill","blue")
 		.text("Source: http://stat-computing.org/dataexpo/2009/the-data.html");
 		
 // Load the data
@@ -67,7 +77,7 @@
 		];
       
       var x = myChart.addCategoryAxis("x", "ArrHour");
-		x.title = "Arrival hour";
+		x.title = "Actual arrival time";
 		x.fontSize = "12px";
 		x.addOrderRule(['5am','6am','7am','8am','9am','10am','11am','12pm','1pm','2pm',
 		'3pm','4pm','5pm','6pm','7pm','8pm','9pm','10pm','11pm','12am','1am','2am',
@@ -92,8 +102,6 @@
 
       myChart.draw();
 
-		d3.selectAll("circle").attr("opacity",0.5); // change opacity of points
-
 // Legend title
 		svg.selectAll("title_text")
 			.data(["Click legend to select one reason","CTRL-click to select more than one",
@@ -110,10 +118,10 @@
 // Add note to bottom of the chart explaining the axes
 		svg.selectAll("title_text")
 			.data(["All Causes: The average delay due to all delay reasons",
+			"Late Aircraft: A previous flight with same aircraft arrived late, causing the present flight to depart late",
 			"Carrier: Delay was due to circumstances within the airline's control (e.g. maintenance or crew problems)",
 			"Weather: Delay due to significant meteorological conditions (e.g. hurricane)",
 			"NAS: Delays due to the National Air Systems that refers to a broad set of conditions (e.g. heavy traffic volume)",
-			"Late Aircraft: A previous flight with same aircraft arrived late, causing the present flight to depart late",
 			"Security: Delays caused by evacuation of a terminal or concourse, re-boarding of aircraft etc."])
 			.enter()
 			.append("text")
@@ -170,7 +178,6 @@
 				myChart.data = dimple.filterData(data, "reason", reason_list); // Filter for reason
 
 				myChart.draw();
-				d3.selectAll("circle").attr("opacity",0.5); // change radius and opacity of points
 			});
     });
   </script>

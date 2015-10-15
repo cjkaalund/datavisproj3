@@ -43,6 +43,8 @@ Q5. What do you notice in the visualisation?
 
 *I don’t know what the circle size is.*
 
+In response to this reviewer's answer to question 2, I added an explanation of the various delay reasons to the bottom of the chart.
+
 ##Second reviewer - Clare - feedback on bubble chart
 Q1. What do you notice in the visualisation?
 
@@ -110,9 +112,12 @@ The following changes were made after feedback from the three reviewers of the b
 * Limited number of carriers displayed
 * Plotted average delay time rather than 75th percentile.
 
-The following changes were made after feedback from one reviewer of the line chart:
+The following changes were made after feedback from one reviewer of the line chart, and
+Charlotte from Udacity:
 * Added explanation of delay reasons at the bottom of the chart.
 * I made the chart wider so that the x-axis labels rotated, improving readability.
+* Made the title the subtitle, and made a new main title that poses a question (and thus guides the reader as to the story being told)
+* Changed the x-axis title to read 'Actual arrival time', which is what it should be. (It's not the scheduled arrival time)
 
 ##Resources
   * http://stat-computing.org/dataexpo/2009/the-data.html
