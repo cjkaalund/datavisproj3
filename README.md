@@ -1,5 +1,5 @@
 #Summary
-This is a line chart of average flight delay (minutes) against arrival hour averaged over all U.S. airlines and airports in January 2008 using data from http://stat-computing.org/dataexpo/2009/the-data.html. It shows that arrival delay depends on the arrival hour, and that the time variation is different for different delay reasons. An interactive legend enables selection of delay reasons.
+This is a line chart of average flight delay (minutes) against arrival hour averaged over all U.S. airlines and airports in January 2008 using data from http://stat-computing.org/dataexpo/2009/the-data.html. It shows that arrival delay depends on the arrival hour, and that the time variation is different for different delay reasons. An interactive legend enables selection of delay reasons. A second chart shows the variation in total airline arrivals over the day.
 
 #Design
 The primary aim of the chart is to show the dependence of arrival delay on arrival time. Since there are two continuous variables, a line chart was chosen. A line chart is more appropriate than a scatter plot, as the lines show that there is a connection between points, in this case due to a variation in time.
@@ -10,7 +10,11 @@ The chart shows that arrival delay is a function of arrival time, and several re
 
 The x-axis starts at 5am and ends at 4am, to emphasise the increase in delay over the day.
 
-I believe that this chart is explanatory in that is shows some non-obvious trends, and that the various components (delay reasons) have different trends. The overall arrival delay is explained by the arrival hour, and also as the sum of components of differing magnitudes each with its own trend. It communicates the story that arrival delay increases during the day, primarily due to 'Late Aircraft', and then increases sharply in the early hours of the morning. By displaying all of the delay causes together, and the total of these ('All Causes'), the reader can infer that the delay due to all causes is the sum of the components. This is further explained in some text below the chart, which describes in detail all of the delay reasons listed in the legend. (I added this after feedback from reviewers.) It is interesting to speculate as to the reasons for the trends. e.g. why is security delay highest at the start of the day, why does 'Late Aircraft' delay increase during the day, etc.
+I believe that this chart is explanatory in that is shows some non-obvious trends, and that the various components (delay reasons) have different trends. The overall arrival delay is explained by the arrival hour, and also as the sum of components of differing magnitudes each with its own trend. It communicates the story that arrival delay increases during the day, primarily due to 'Late Aircraft', and then increases sharply in the early hours of the morning. By displaying all of the delay causes together, and the total of these ('All Causes'), the reader can infer that the delay due to all causes is the sum of the components and see the correlation between 'All Causes' and 'Late Aircraft'. This is further explained in some text at the bottom of the page, which describes in detail all of the delay reasons listed in the legend. (I added this after feedback from reviewers.) It is interesting to speculate as to the reasons for the trends. e.g. why is security delay highest at the start of the day?
+
+A second chart was added to the bottom of the page, a line chart showing the change in the number of flights against time of the day. A subtitle for this chart explains that the traffic volume correlates with late aircraft delay and overall delay during peak hours. Outside of peak hours (roughly 6am to 11pm) the correlation doesn't hold. The reasons for this are not necessarily to be found in the dataset. Correlation is usually shown by using a scatter chart of one variable against another, often with a line-of-best-fit. The line chart against time, however, has the advantage of showing the variation over the day, and it is clear that the correlation applies only during peak hours. Making the the x-axes of both the top and bottom chart are identical assists the chart reader in interpreting the data.
+
+I've highlight two regions, increasing traffic/delay and decreasing traffic/increasing delay, using lines and labels. In the first region, there is a positive correlation between the number of arriving planes and the delay (late aircraft delay and delay due to all causes). In the second, other factors take over.
 
 R was used to reshape the data for plotting with dimplejs. This reshaped data is in a file called 2008_delay_causes.csv. I've added a snippet of the original file (prior to reshaping), 2008_delay_causes_snippet.csv.
 
@@ -19,7 +23,7 @@ These charts have undergone major revisions.
 * index1.html - Scatter12.html - original scatterplot for first submission
 * index2.html - Bubble1.html - modified the scatterplot to make a bubble chart, plotted delay against arrival time, presented to three reviewers
 * index3.html - Line1.html - converted the bubble chart to a line chart, changed the legend to make the chart more 'explanatory' and interesting
-* final_index.html - Line2.html - modified after feedback from one reviewer
+* final_index.html - Line3.html - changed chart title and axes label, modified after feedback from one reviewer and Udacity, added traffic volume chart to the bottom of the page
 
 #Feedback
 ##First reviewer - Sara - feedback on bubble chart
@@ -118,6 +122,7 @@ Charlotte from Udacity:
 * I made the chart wider so that the x-axis labels rotated, improving readability.
 * Made the title the subtitle, and made a new main title that poses a question (and thus guides the reader as to the story being told)
 * Changed the x-axis title to read 'Actual arrival time', which is what it should be. (It's not the scheduled arrival time)
+* Added second chart to the bottom of the page, showing number of flights arriving against hour, adding a further level of explanation
 
 ##Resources
   * http://stat-computing.org/dataexpo/2009/the-data.html

@@ -21,52 +21,63 @@
 <div id="chartContainer">
    <script src="http://d3js.org/d3.v3.min.js"></script>
    <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
- 	<script type="text/javascript">
+   <script type="text/javascript">
   
 // Chart size and margins
 // The margins allow space for surrounding elements such as the legend
-	var margin = {top: 100, right: 200, bottom: 200, left:60}
-	var chartSize = {width: 800, height: 250}
+	var margin = {top: 100, right: 200, bottom: 200, left:60, gap:150}
+	var chartSize1 = {width: 800, height: 250}
+	var chartSize2 = {width: 800, height: 100}
 
 // Create chart svg
 	var svg = dimple.newSvg("#chartContainer",
-		margin.left + chartSize.width + margin.right,
-		margin.top + chartSize.height + margin.bottom
+		margin.left + chartSize1.width + margin.right,
+		margin.top + chartSize1.height + margin.gap + chartSize2.height + margin.bottom
 	);
 
 // Chart heading
 	svg.append("text")
-		.attr("x", margin.left + chartSize.width / 2).attr("y", margin.top / 2.5)
+		.attr("x", margin.left + chartSize1.width / 2).attr("y", margin.top / 2.5)
 		.style("text-anchor", "middle").style("font-family", "sans-serif")
 		.style("font-size", "22px")
 		.attr("id", "heading") // give it an id for selection later on
 		.text("How and why does flight delay vary over the day?");
 		
-// Chart subheading
+// Subheading for first chart
 	svg.append("text")
-		.attr("x", margin.left + chartSize.width / 2).attr("y", margin.top / 1.4)
+		.attr("x", margin.left + chartSize1.width / 2).attr("y", margin.top / 1.4)
 		.style("text-anchor", "middle").style("font-family", "sans-serif")
 		.style("font-size", "18px")
 		.style("fill","blue")
 		.attr("id", "heading") // give it an id for selection later on
-		.text("Flight Delay for U.S. Airports, January 2008");
+		.text("Arrival Delay for U.S. Airports, January 2008");
+
+// Subheading for second chart
+	svg.append("text")
+		.attr("x", margin.left + chartSize1.width / 2)
+		.attr("y", margin.top + chartSize1.height + margin.gap / 1.3)
+		.style("text-anchor", "middle").style("font-family", "sans-serif")
+		.style("font-size", "18px")
+		.style("fill","blue")
+		.attr("id", "heading") // give it an id for selection later on
+		.text("Late aircraft delay increases as traffic increases, Region 1");
 
 // Display data source
 	svg.append("text")
-		.attr("x", margin.left + chartSize.width / 2).attr("y", margin.top)
+		.attr("x", margin.left + chartSize1.width / 2).attr("y", margin.top)
 		.style("text-anchor", "middle").style("font-family", "sans-serif")
 		.style("font-size", "12px")
 		.style("fill","blue")
 		.text("Source: http://stat-computing.org/dataexpo/2009/the-data.html");
-		
+			
 // Load the data
 	d3.csv("2008_delay_causes.csv", function (data) {
 						 
-// Draw a bubbleplot with legend using dimple
-      var myChart = new dimple.chart(svg, data);
-      myChart.setBounds(margin.left, margin.top, chartSize.width, chartSize.height)
+// Draw a line chart with legend using dimple
+      var myChart1 = new dimple.chart(svg, data);
+      myChart1.setBounds(margin.left, margin.top, chartSize1.width, chartSize1.height)
 
-		myChart.defaultColors = [ // Custom color palette based on http://flatuicolors.com/ + my own
+		myChart1.defaultColors = [ // Custom color palette based on http://flatuicolors.com/ + my own
 			new dimple.color("#3498db", "#2980b9", 1), // peter river
 			new dimple.color("#e74c3c", "#c0392b", 1), // alizarin
 			new dimple.color("#2ecc71", "#27ae60", 1), // emerald
@@ -76,40 +87,100 @@
 			new dimple.color("#1abc9c", "#16a085", 1), // turquoise
 		];
       
-      var x = myChart.addCategoryAxis("x", "ArrHour");
+      var x = myChart1.addCategoryAxis("x", "ArrHour");
 		x.title = "Actual arrival time";
 		x.fontSize = "12px";
-		x.addOrderRule(['5am','6am','7am','8am','9am','10am','11am','12pm','1pm','2pm',
+		x.addOrderRule(['6am','7am','8am','9am','10am','11am','12pm','1pm','2pm',
 		'3pm','4pm','5pm','6pm','7pm','8pm','9pm','10pm','11pm','12am','1am','2am',
-		'3am','4am']);
+		'3am','4am','5am']);
 		
-      var y = myChart.addMeasureAxis("y", "avg_delay");
+      var y = myChart1.addMeasureAxis("y", "avg_delay");
       y.title = "Average arrival delay (minutes)";
       y.fontSize = "12px";
-//      y.overrideMax = 200;
-
    
        // the legend will be the delay reason
-      var mySeries = myChart.addSeries("reason", dimple.plot.line);
+      var mySeries = myChart1.addSeries("reason", dimple.plot.line);
       mySeries.lineWeight = 2;
       mySeries.lineMarkers = true;
       
       var reason_list = dimple.getUniqueValues(data, "reason").sort();
-//		mySeries.addOrderRule(reason); // sort legend
-      var myLegend = myChart.addLegend(margin.left + chartSize.width - 60,
-      	margin.top + 80, margin.right, chartSize.height, "Left");
+      var myLegend = myChart1.addLegend(margin.left + chartSize1.width - 60,
+      	margin.top + 80, margin.right, chartSize1.height, "Left");
       myLegend.fontSize = "12px";
 
-      myChart.draw();
+      myChart1.draw();
 
-// Legend title
+// Draw lines identifying two regions (dashingd3js.com)
+
+		var lineData1 = [{"x":margin.left+20, "y":chartSize1.height+margin.top+margin.gap/2},
+		{"x":margin.left+485, "y":chartSize1.height+margin.top+margin.gap/2}];
+
+		var lineData2 = [{"x":margin.left+490, "y":chartSize1.height+margin.top+margin.gap/2},
+		{"x":margin.left+chartSize1.width-50, "y":chartSize1.height+margin.top+margin.gap/2}];
+
+		var lineFunction = d3.svg.line()
+			.x(function(d) {return d.x;})
+			.y(function(d) {return d.y;})
+			.interpolate("linear");
+			
+		svg.append("path")
+			.attr("d",lineFunction(lineData1))
+			.attr("stroke","green")
+			.attr("stroke-width",2)
+			.attr("fill","none");
+
+		svg.append("path")
+			.attr("d",lineFunction(lineData2))
+			.attr("stroke","red")
+			.attr("stroke-width",2)
+			.attr("fill","none");
+
+		svg.append("text")
+			.attr("x", margin.left + chartSize1.width / 3)
+			.attr("y", chartSize1.height+margin.top+margin.gap/2-10)
+			.style("text-anchor", "middle").style("font-family", "sans-serif")
+			.style("font-size", "16px")
+			.style("fill","green")
+			.text("Increasing traffic / increasing delay");
+
+		svg.append("text")
+			.attr("x", margin.left + chartSize1.width / 1.27)
+			.attr("y", chartSize1.height+margin.top+margin.gap/2-10)
+			.style("text-anchor", "middle").style("font-family", "sans-serif")
+			.style("font-size", "16px")
+			.style("fill","red")
+			.text("Decreasing traffic / rapidly increasing delay");
+
+// Second chart showing traffic volume
+      var myChart2 = new dimple.chart(svg, data);
+      myChart2.setBounds(margin.left, margin.top + chartSize1.height + margin.gap,
+      chartSize2.width, chartSize2.height)
+
+      var x2 = myChart2.addCategoryAxis("x", "ArrHour");
+		x2.title = "Actual arrival time";
+		x2.fontSize = "12px";
+		x2.addOrderRule(['6am','7am','8am','9am','10am','11am','12pm','1pm','2pm',
+		'3pm','4pm','5pm','6pm','7pm','8pm','9pm','10pm','11pm','12am','1am','2am',
+		'3am','4am','5am']);
+
+      var y2 = myChart2.addMeasureAxis("y", "n");
+      y2.ticks = 5;
+      y2.title = "Number of arrivals";
+      y2.fontSize = "12px";
+
+      var mySeries2 = myChart2.addSeries("reason",dimple.plot.line);
+      mySeries2.lineWeight = 2;
+      mySeries2.lineMarkers = true;
+      
+      myChart2.draw();
+
+// Legend help text
 		svg.selectAll("title_text")
-			.data(["Click legend to select one reason","CTRL-click to select more than one",
-			"SHIFT-click to select all"])
+			.data(["Delay reasons","Click legend to select one reason","CTRL-click to select more than one"])
 			.enter()
 			.append("text")
-				.attr("x", margin.left + chartSize.width + 10)
-				.attr("y", function (d, i) { return margin.top + i * 14 + 40; })
+				.attr("x", margin.left + chartSize1.width + 10)
+				.attr("y", function (d, i) { return margin.top + i * 14 + 30; })
 				.style("font-family", "sans-serif")
 				.style("font-size", "12px")
 				.style("fill","blue")
@@ -126,7 +197,7 @@
 			.enter()
 			.append("text")
 				.attr("x", 0)
-				.attr("y", function (d, i) { return margin.top + chartSize.height + i * 16 + 75; })
+				.attr("y", function (d, i) { return margin.top + chartSize1.height + margin.gap + chartSize2.height + i * 16 + 75; })
 				.style("font-family", "sans-serif")
 				.style("font-size", "12px")
 				.style("fill","blue")
@@ -134,7 +205,7 @@
 				
 // Interactive legend
 // http://dimplejs.org/advanced_examples_viewer.html?id=advanced_interactive_legends
-		myChart.legends = []; // Orphan the legend
+		myChart1.legends = []; // Orphan the legend
 		myLegend.shapes.selectAll("rect")
 			.on("click", function (e) {
 				var selected_reason = e.aggField.slice(-1)[0];			
@@ -175,9 +246,9 @@
 				};
 				
 				reason_list = new_reason_list; // Update the filters			
-				myChart.data = dimple.filterData(data, "reason", reason_list); // Filter for reason
+				myChart1.data = dimple.filterData(data, "reason", reason_list); // Filter for reason
 
-				myChart.draw();
+				myChart1.draw();
 			});
     });
   </script>
