@@ -90,9 +90,9 @@
       var x = myChart1.addCategoryAxis("x", "ArrHour");
 		x.title = "Actual arrival time";
 		x.fontSize = "12px";
-		x.addOrderRule(['6am','7am','8am','9am','10am','11am','12pm','1pm','2pm',
+		x.addOrderRule(['5am','6am','7am','8am','9am','10am','11am','12pm','1pm','2pm',
 		'3pm','4pm','5pm','6pm','7pm','8pm','9pm','10pm','11pm','12am','1am','2am',
-		'3am','4am','5am']);
+		'3am','4am']);
 		
       var y = myChart1.addMeasureAxis("y", "avg_delay");
       y.title = "Average arrival delay (minutes)";
@@ -112,11 +112,11 @@
 
 // Draw lines identifying two regions (dashingd3js.com)
 
-		var lineData1 = [{"x":margin.left+20, "y":chartSize1.height+margin.top+margin.gap/2},
-		{"x":margin.left+485, "y":chartSize1.height+margin.top+margin.gap/2}];
+		var lineData1 = [{"x":margin.left+50, "y":chartSize1.height+margin.top+margin.gap/2},
+		{"x":margin.left+505, "y":chartSize1.height+margin.top+margin.gap/2}];
 
 		var lineData2 = [{"x":margin.left+490, "y":chartSize1.height+margin.top+margin.gap/2},
-		{"x":margin.left+chartSize1.width-50, "y":chartSize1.height+margin.top+margin.gap/2}];
+		{"x":margin.left+chartSize1.width-30, "y":chartSize1.height+margin.top+margin.gap/2}];
 
 		var lineFunction = d3.svg.line()
 			.x(function(d) {return d.x;})
@@ -159,9 +159,9 @@
       var x2 = myChart2.addCategoryAxis("x", "ArrHour");
 		x2.title = "Actual arrival time";
 		x2.fontSize = "12px";
-		x2.addOrderRule(['6am','7am','8am','9am','10am','11am','12pm','1pm','2pm',
+		x2.addOrderRule(['5am','6am','7am','8am','9am','10am','11am','12pm','1pm','2pm',
 		'3pm','4pm','5pm','6pm','7pm','8pm','9pm','10pm','11pm','12am','1am','2am',
-		'3am','4am','5am']);
+		'3am','4am']);
 
       var y2 = myChart2.addMeasureAxis("y", "n");
       y2.ticks = 5;
